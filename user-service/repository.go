@@ -15,7 +15,7 @@ type Repository interface {
 	Create(user *pb.User) error
 	Get(id string) (*pb.User, error)
 	GetAll() ([]*pb.User, error)
-	GetByEmailAndPassword(email string, password string) (*pb.User, error)
+	GetByEmail(email string) (*pb.User, error)
 }
 
 // UsersRepository structure
@@ -48,11 +48,10 @@ func (repo *UsersRepository) GetAll() ([]*pb.User, error) {
 	return users, nil
 }
 
-// GetByEmailAndPassword returns user by email and password
-func (repo *UsersRepository) GetByEmailAndPassword(email string, password string) (*pb.User, error) {
+// GetByEmail returns user by email
+func (repo *UsersRepository) GetByEmail(email string) (*pb.User, error) {
 	var user *pb.User
 	user.Email = email
-	user.Password = password
 
 	if err := repo.db.First(&user).Error; err != nil {
 		return nil, err

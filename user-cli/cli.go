@@ -81,13 +81,14 @@ func main() {
 			}
 			log.Printf("Created: %s", r.User.Id)
 
-			getAll, err := client.GetAll(context.Background(), &pb.Request{})
+			authResponse, err := client.Auth(context.TODO(), &pb.User{
+				Email:    email,
+				Password: password,
+			})
 			if err != nil {
-				log.Fatalf("Could not list users: %v", err)
+				log.Panicf("Could not auth user: %v", err)
 			}
-			for _, v := range getAll.Users {
-				log.Println(v)
-			}
+			log.Printf("Your access token is: %s", authResponse.Token)
 
 			os.Exit(0)
 		}),

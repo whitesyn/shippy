@@ -4,11 +4,12 @@ import (
 	"context"
 
 	pb "github.com/whitesyn/shippy/user-service/proto/user"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type handler struct {
-	repo Repository
-	// tokenService Authable
+	repo         Repository
+	tokenService Authable
 }
 
 func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateResponse) error {
@@ -42,9 +43,13 @@ func (h *handler) GetAll(ctx context.Context, req *pb.Request, res *pb.UsersResp
 }
 
 func (h *handler) Auth(ctx context.Context, req *pb.User, res *pb.Token) error {
-	user, err := h.repo.GetByEmailAndPassword(req.Email, req.Password)
+	user, err := h.repo.GetByEmail(req.Email)
 	if err != nil {
 		return nil
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
+		return err
 	}
 
 	res.Token = user.Id + "_" + user.Email

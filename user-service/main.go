@@ -31,7 +31,7 @@ func main() {
 	srv.Init()
 
 	// Register handler
-	pb.RegisterUserServiceHandler(srv.Server(), &handler{repo})
+	pb.RegisterUserServiceHandler(srv.Server(), &handler{repo, &TokenService{}})
 
 	if err := srv.Run(); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

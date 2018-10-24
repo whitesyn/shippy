@@ -1,8 +1,9 @@
 FROM golang:1.11.1 as builder
-WORKDIR /go/src/github.com/whitesyn/shippy/user-service
-COPY . .
 RUN go get -u github.com/golang/dep/cmd/dep
-RUN dep init && dep ensure
+WORKDIR /go/src/github.com/whitesyn/shippy/user-service
+COPY Gopkg.toml Gopkg.lock ./
+RUN dep ensure --vendor-only
+COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo .
 
 FROM alpine:latest
@@ -10,5 +11,4 @@ RUN apk --no-cache add ca-certificates
 RUN mkdir /app
 WORKDIR /app
 COPY --from=builder /go/src/github.com/whitesyn/shippy/user-service/user-service .
-
 CMD ["./user-service"]
