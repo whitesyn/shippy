@@ -69,6 +69,22 @@
   revision = "19bbd39e421bdf3559d5025fb2c760f5ffa56233"
 
 [[projects]]
+  digest = "1:235ae01f32fb5f12c5f6d2e0e05ab48e651ab31c126e45a4efc4f510810941ac"
+  name = "github.com/jinzhu/gorm"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
+  version = "v1.9.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:fd97437fbb6b7dce04132cf06775bd258cce305c44add58eb55ca86c6c325160"
+  name = "github.com/jinzhu/inflection"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "04140366298a54a039076d798123ffa108fff46c"
+
+[[projects]]
   branch = "master"
   digest = "1:0d3455926b7b805da0ba04fe325ad7662f47c0b6522500a2d787667e2fb6e463"
   name = "github.com/micro/cli"
@@ -193,9 +209,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:444180ab80540e95d9482dc84c721ef90ce9356e3024ba793cfd8fc150afd18f"
+  digest = "1:2823d004af851a8999d533ec3f1a7bf5ffcf9acb2dc5d0c6144d8351e0e4fdec"
   name = "github.com/whitesyn/shippy"
-  packages = ["vessel-service/proto/vessel"]
+  packages = [
+    "user-service/proto/user",
+    "vessel-service/proto/vessel",
+  ]
   pruneopts = "UT"
   revision = "65fba5862d4d783a2bc8d45db900d73d15b43c83"
 
@@ -254,7 +273,9 @@
     "github.com/golang/protobuf/proto",
     "github.com/micro/go-micro",
     "github.com/micro/go-micro/client",
+    "github.com/micro/go-micro/metadata",
     "github.com/micro/go-micro/server",
+    "github.com/whitesyn/shippy/user-service/proto/user",
     "github.com/whitesyn/shippy/vessel-service/proto/vessel",
     "golang.org/x/net/context",
     "gopkg.in/mgo.v2",
