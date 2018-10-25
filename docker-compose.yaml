@@ -57,7 +57,6 @@ services:
       MICRO_REGISTRY: "mdns"
       MICRO_ADDRESS: ":50051"
     depends_on:
-      - database
       - pubsub
 
   datastore:

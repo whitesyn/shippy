@@ -31,15 +31,11 @@ func main() {
 	srv.Init()
 
 	// Get instance of the broker using our defaults
-	pubsub := srv.Server().Options().Broker
-	if err := pubsub.Connect(); err != nil {
-		log.Fatal(err)
-	}
-
+	publisher := micro.NewPublisher("user.created", srv.Client())
 	tokenService := &TokenService{}
 
 	// Register handler
-	pb.RegisterUserServiceHandler(srv.Server(), &handler{repo, tokenService, pubsub})
+	pb.RegisterUserServiceHandler(srv.Server(), &handler{repo, tokenService, publisher})
 
 	if err := srv.Run(); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

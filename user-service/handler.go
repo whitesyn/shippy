@@ -2,11 +2,10 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"log"
 
-	"github.com/micro/go-micro/broker"
+	micro "github.com/micro/go-micro"
 	pb "github.com/whitesyn/shippy/user-service/proto/user"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -16,7 +15,7 @@ const topic = "user.created"
 type handler struct {
 	repo         Repository
 	tokenService Authable
-	pubsub       broker.Broker
+	publisher    micro.Publisher
 }
 
 func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateResponse) error {
@@ -27,22 +26,19 @@ func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateRespon
 	req.Password = string(hashedPass)
 
 	user, err := h.repo.GetByEmail(req.Email)
-	if err != nil {
-		return err
-	}
-
 	if user != nil {
 		return errors.New("User with this e-mail already exists")
 	}
 
 	if err := h.repo.Create(req); err != nil {
+		log.Println("Creating user error: ", err)
 		return err
 	}
 
 	res.Created = true
 	res.User = req
 
-	if err := h.PublishEvent(req); err != nil {
+	if err := h.publisher.Publish(ctx, req); err != nil {
 		return err
 	}
 
@@ -98,26 +94,5 @@ func (h *handler) ValidateToken(ctx context.Context, req *pb.Token, res *pb.Toke
 	}
 
 	res.Valid = true
-	return nil
-}
-
-func (h *handler) PublishEvent(user *pb.User) error {
-	body, err := json.Marshal(user)
-	if err != nil {
-		return err
-	}
-
-	msg := &broker.Message{
-		Header: map[string]string{
-			"id": user.Id,
-		},
-		Body: body,
-	}
-
-	if err := h.pubsub.Publish(topic, msg); err != nil {
-		log.Printf("[pub] failed: %v", err)
-		return err
-	}
-
 	return nil
 }

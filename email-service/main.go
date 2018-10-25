@@ -1,15 +1,24 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"log"
 
 	micro "github.com/micro/go-micro"
-	"github.com/micro/go-micro/broker"
 	pb "github.com/whitesyn/shippy/user-service/proto/user"
 )
 
 const topic = "user.created"
+
+// Subscriber structure
+type Subscriber struct{}
+
+// Process topic message
+func (sub *Subscriber) Process(ctx context.Context, user *pb.User) error {
+	log.Println("Picked up a new message")
+	log.Println("Sending email to:", user.Name)
+	return nil
+}
 
 func main() {
 	// Create a new service
@@ -21,24 +30,8 @@ func main() {
 	// Init will parse the command line flags
 	srv.Init()
 
-	// Get instance of the broker using our defaults
-	pubsub := srv.Server().Options().Broker
-	if err := pubsub.Connect(); err != nil {
-		log.Fatal(err)
-	}
-
-	_, err := pubsub.Subscribe(topic, func(p broker.Publication) error {
-		var user *pb.User
-		if err := json.Unmarshal(p.Message().Body, &user); err != nil {
-			return err
-		}
-		log.Printf("User created: %v", user)
-		go sendEmail(user)
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
+	// Subscribe on "user.created" topic
+	micro.RegisterSubscriber(topic, srv.Server(), new(Subscriber))
 
 	if err := srv.Run(); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
