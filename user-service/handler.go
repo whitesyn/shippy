@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
 
 	micro "github.com/micro/go-micro"
 	pb "github.com/whitesyn/shippy/user-service/proto/user"
@@ -21,7 +21,7 @@ type handler struct {
 func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateResponse) error {
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
+		return fmt.Errorf("error hashing password: %v", err)
 	}
 	req.Password = string(hashedPass)
 
@@ -31,15 +31,14 @@ func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateRespon
 	}
 
 	if err := h.repo.Create(req); err != nil {
-		log.Println("Creating user error: ", err)
-		return err
+		return fmt.Errorf("error creating user: %v", err)
 	}
 
 	res.Created = true
 	res.User = req
 
 	if err := h.publisher.Publish(ctx, req); err != nil {
-		return err
+		return fmt.Errorf("error publishing event: %v", err)
 	}
 
 	return nil

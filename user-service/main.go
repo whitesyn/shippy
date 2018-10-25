@@ -19,8 +19,6 @@ func main() {
 	// this service is restarted.
 	db.AutoMigrate(&pb.User{})
 
-	repo := &UsersRepository{db}
-
 	// Create a new service
 	srv := micro.NewService(
 		micro.Name("go.micro.srv.user"),
@@ -30,9 +28,9 @@ func main() {
 	// Init will parse the command line flags
 	srv.Init()
 
-	// Get instance of the broker using our defaults
-	publisher := micro.NewPublisher("user.created", srv.Client())
+	repo := &UsersRepository{db}
 	tokenService := &TokenService{}
+	publisher := micro.NewPublisher("user.created", srv.Client())
 
 	// Register handler
 	pb.RegisterUserServiceHandler(srv.Server(), &handler{repo, tokenService, publisher})

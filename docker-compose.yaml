@@ -47,7 +47,6 @@ services:
       DB_PASSWORD: "postgres"
     depends_on:
       - database
-      - pubsub
 
   email-service:
     build: ./email-service
@@ -56,8 +55,6 @@ services:
     environment:
       MICRO_REGISTRY: "mdns"
       MICRO_ADDRESS: ":50051"
-    depends_on:
-      - pubsub
 
   datastore:
     image: mongo
@@ -68,8 +65,3 @@ services:
     image: postgres
     ports:
       - 5432:5432
-
-  pubsub:
-    image: nats
-    ports:
-      - 4222:4222
