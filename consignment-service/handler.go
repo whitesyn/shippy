@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"gopkg.in/mgo.v2"
@@ -35,7 +36,7 @@ func (s *handler) CreateConsignment(ctx context.Context, req *pb.Consignment, re
 		Capacity:  int32(len(req.Containers)),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("No vessels available: %v", err)
 	}
 
 	log.Printf("Found vessel: %s \n", vesselResponse.Vessel.Name)

@@ -50,10 +50,8 @@ func (repo *UsersRepository) GetAll() ([]*pb.User, error) {
 
 // GetByEmail returns user by email
 func (repo *UsersRepository) GetByEmail(email string) (*pb.User, error) {
-	var user *pb.User
-	user.Email = email
-
-	if err := repo.db.First(&user).Error; err != nil {
+	user := &pb.User{}
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil

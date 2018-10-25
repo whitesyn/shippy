@@ -7,8 +7,8 @@ import (
 	pb "github.com/whitesyn/shippy/user-service/proto/user"
 )
 
-const (
-	key = "mySuperSecureSecretKey"
+var (
+	key = []byte("YvCQKVAiqHN6RO4OwhCr129pC76kfyqY")
 )
 
 // CustomClaims type
@@ -33,7 +33,11 @@ func (srv *TokenService) Decode(tokenString string) (*CustomClaims, error) {
 		return key, nil
 	})
 
-	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(*CustomClaims)
+	if ok && token.Valid {
 		return claims, nil
 	}
 

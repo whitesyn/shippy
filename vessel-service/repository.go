@@ -34,7 +34,6 @@ func (repo *VesselsRepository) Create(vessel *pb.Vessel) error {
 // then return that vessel.
 func (repo *VesselsRepository) FindAvailable(spec *pb.Specification) (*pb.Vessel, error) {
 	var vessel *pb.Vessel
-
 	err := repo.collection().Find(bson.M{
 		"capacity":  bson.M{"$gte": spec.Capacity},
 		"maxweight": bson.M{"$gte": spec.MaxWeight},

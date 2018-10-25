@@ -20,7 +20,10 @@ func creatDeummyData(repo Repository) {
 		&pb.Vessel{Id: "vessel003", Name: "Boaty McBoaty", MaxWeight: 250000, Capacity: 550},
 	}
 	for _, vessel := range vessels {
-		repo.Create(vessel)
+		err := repo.Create(vessel)
+		if err != nil {
+			log.Panicf("Err %v", err)
+		}
 	}
 }
 

@@ -33,8 +33,6 @@ func parseFile(file string) (*pb.Consignment, error) {
 func main() {
 	cmd.Init()
 
-	client := pb.NewShippingServiceClient("go.micro.srv.consignment", microclient.DefaultClient)
-
 	if len(os.Args) < 3 {
 		log.Fatal("Not enough arguments, expecing file and token.")
 	}
@@ -54,6 +52,8 @@ func main() {
 	ctx := metadata.NewContext(context.Background(), map[string]string{
 		"token": token,
 	})
+
+	client := pb.NewShippingServiceClient("go.micro.srv.consignment", microclient.DefaultClient)
 
 	// Contact the server and print out its response.
 	r, err := client.CreateConsignment(ctx, consignment)
