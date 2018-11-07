@@ -21,7 +21,7 @@ type handler struct {
 func (h *handler) Create(ctx context.Context, req *pb.User, res *pb.CreateResponse) error {
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return fmt.Errorf("error hashing password: %v", err)
+		return fmt.Errorf("Error hashing password: %v", err)
 	}
 	req.Password = string(hashedPass)
 
